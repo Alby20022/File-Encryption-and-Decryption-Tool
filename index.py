@@ -1,85 +1,467 @@
-#!/usr/bin/env python3
-"""
-File Encryption & Decryption Tool v3.0 Ultra - Master Python Entry Point
-========================================================================
-Main application launcher for File Encryption & Decryption Tool.
-Runs a local server and launches the Web UI in your default browser.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Encryption & Decryption Tool - Zero-Trust Client-Side Web Cryptography Suite</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Ultra-secure zero-trust web cryptography suite. Encrypt and decrypt files, text, and passwords 100% locally in your browser with AES-256-GCM.">
+  <meta name="theme-color" content="#040711">
 
-Usage:
-    python index.py [port]
-"""
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
 
-import http.server
-import socketserver
-import os
-import sys
-import socket
-import webbrowser
-import time
+  <!-- Master Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-theme="cyan">
 
-DEFAULT_PORT = 8000
+  <!-- Interactive 60 FPS Canvas Layer -->
+  <canvas id="bg-canvas"></canvas>
 
-def get_free_port(start_port=8000):
-    """Find an available TCP port starting from start_port."""
-    port = start_port
-    while port < 9999:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            if s.connect_ex(('127.0.0.1', port)) != 0:
-                return port
-        port += 1
-    return start_port
+  <div class="app-layout">
+    
+    <!-- App Header & Brand Bar -->
+    <header class="app-header">
+      <div class="header-container">
+        
+        <a href="#" class="logo-group">
+          <div class="logo-icon-wrapper">
+            <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+          <div class="logo-text">
+            <span class="brand-title">File <span class="highlight">Encryption</span> &amp; Decryption Tool</span>
+            <span class="brand-badge">v3.0 Ultra</span>
+          </div>
+        </a>
 
-class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
-    """HTTP Request Handler serving files with correct MIME types."""
-    def end_headers(self):
-        self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
-        self.send_header("Pragma", "no-cache")
-        self.send_header("Expires", "0")
-        super().end_headers()
+        <div class="security-banner">
+          <span class="status-dot pulse"></span>
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <span>100% Zero-Trust Client Engine &bull; Zero Server Uploads</span>
+        </div>
 
-def main():
-    # Ensure current directory is script root
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    os.chdir(script_dir)
+        <div class="header-actions">
+          <!-- Color Theme Selector -->
+          <div class="theme-selector" id="theme-selector-group">
+            <button class="theme-btn active" data-set-theme="cyan" title="Deep Cyan"></button>
+            <button class="theme-btn" data-set-theme="emerald" title="Cyber Emerald"></button>
+            <button class="theme-btn" data-set-theme="violet" title="Violet Pulse"></button>
+            <button class="theme-btn" data-set-theme="amber" title="Solar Gold"></button>
+          </div>
 
-    # Determine port
-    if len(sys.argv) > 1 and sys.argv[1].isdigit():
-        port = int(sys.argv[1])
-    else:
-        port = get_free_port(DEFAULT_PORT)
+          <!-- Web Audio Sound FX Toggle -->
+          <button id="btn-audio-toggle" class="icon-btn" title="Toggle Audio FX Sound Synthesis">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            </svg>
+          </button>
 
-    url = f"http://localhost:{port}"
+          <!-- GitHub Repository Link Button -->
+          <a id="btn-github-link" href="https://github.com/Alby20022/File-Encryption-and-Decryption-Tool" target="_blank" rel="noopener noreferrer" class="icon-btn" title="View Source Code on GitHub">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+            </svg>
+          </a>
 
-    print("=================================================================")
-    print(" FILE ENCRYPTION & DECRYPTION TOOL v3.0 ULTRA - PYTHON SERVER")
-    print("=================================================================")
-    print(f" [+] Main Entry Point : {os.path.abspath(__file__)}")
-    print(f" [+] Serving Directory: {script_dir}")
-    print(f" [+] Server URL        : {url}")
-    print("=================================================================")
-    print(" Launching Web UI in default browser...")
+          <!-- Panic Purge Button -->
+          <button id="btn-panic-wipe" class="icon-btn" title="Panic Purge Memory & Keys" style="color: #ff2a6d;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
 
-    handler = CustomHTTPRequestHandler
+    <!-- Main Segmented Navigation Bar -->
+    <nav class="main-tabs-wrapper">
+      <div class="tabs-container" id="main-nav-tabs">
+        <button class="nav-tab active" data-tab="tab-encrypt">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <span>Encrypt File</span>
+        </button>
 
-    try:
-        with socketserver.TCPServer(("127.0.0.1", port), handler) as httpd:
-            # Auto open browser after 500ms
-            def open_browser():
-                time.sleep(0.5)
-                webbrowser.open(url)
+        <button class="nav-tab" data-tab="tab-decrypt">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
+          <span>Decrypt File</span>
+        </button>
 
-            import threading
-            threading.Thread(target=open_browser, daemon=True).start()
+        <button class="nav-tab" data-tab="tab-text">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+          <span>Text Vault</span>
+        </button>
 
-            print(f" Server active at {url} (Press Ctrl+C to stop)")
-            httpd.serve_forever()
+        <button class="nav-tab" data-tab="tab-keygen">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.778-7.778zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
+          <span>Key Studio</span>
+        </button>
 
-    except KeyboardInterrupt:
-        print("\n [!] Server stopped by user.")
-        sys.exit(0)
-    except Exception as e:
-        print(f"\n [X] Server error: {e}")
-        sys.exit(1)
+        <button class="nav-tab" data-tab="tab-history">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          <span>Audit Log</span>
+        </button>
+      </div>
+    </nav>
 
-if __name__ == "__main__":
-    main()
+    <!-- Main Workspaces Container -->
+    <main class="app-main">
+
+      <!-- TAB 1: FILE ENCRYPT PANEL -->
+      <section id="tab-encrypt" class="tab-panel active">
+        <div class="grid-2">
+          
+          <!-- Encrypt Controller -->
+          <div class="glass-card">
+            <h2 class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              AES-256-GCM Encryptor
+            </h2>
+            <p class="card-subtitle">Zero-knowledge client-side file encryption with PBKDF2 key derivation.</p>
+
+            <!-- Modern Dropzone -->
+            <div class="dropzone" id="encrypt-dropzone">
+              <input type="file" id="encrypt-file-input" class="file-input-hidden">
+              <div class="dropzone-icon">
+                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              </div>
+              <div class="dropzone-title">Select File to Encrypt</div>
+              <div class="dropzone-desc">Drag & drop your file here, or click the button below</div>
+              <button type="button" class="btn-browse-pill" onclick="document.getElementById('encrypt-file-input').click(); event.stopPropagation();">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                Browse Files
+              </button>
+            </div>
+
+            <!-- Modern Selected File Display Card -->
+            <div id="encrypt-selected-file" class="file-card" style="display: none;">
+              <div class="file-card-info">
+                <div class="file-card-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+                </div>
+                <div>
+                  <div class="file-name" id="enc-filename">filename.ext</div>
+                  <div class="file-meta" id="enc-filesize">0 KB</div>
+                </div>
+              </div>
+              <button id="enc-file-remove" class="icon-btn" title="Remove File">&times;</button>
+            </div>
+
+            <div style="margin-top: 1.5rem;">
+              <div class="form-group">
+                <label class="form-label">
+                  Encryption Passphrase
+                  <span id="enc-strength-label" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent-text);"></span>
+                </label>
+                <div class="input-with-action">
+                  <input type="password" id="encrypt-password" class="form-control" placeholder="Enter strong secret password...">
+                  <button type="button" class="input-action-btn" id="toggle-enc-pwd-vis" title="Show/Hide Password">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                  </button>
+                </div>
+                <div class="strength-meter"><div id="enc-strength-bar" class="strength-bar"></div></div>
+              </div>
+
+              <!-- Modern Custom Keyfile Input Picker -->
+              <div class="form-group">
+                <label class="form-label">Optional Keyfile Protection (.key file)</label>
+                <div class="custom-keyfile-picker">
+                  <input type="file" id="encrypt-keyfile-input" class="file-input-hidden">
+                  <button type="button" class="btn-keyfile-pill" onclick="document.getElementById('encrypt-keyfile-input').click();">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.778-7.778zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
+                    Attach .key File
+                  </button>
+                  <span id="enc-keyfile-status" class="keyfile-status-tag">No keyfile attached</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  PBKDF2 Derivation Iterations: <span id="enc-iterations-val" style="color: var(--accent-text); font-family: var(--font-mono);">100,000</span>
+                </label>
+                <input type="range" id="encrypt-iterations" class="range-slider" min="100000" max="500000" step="50000" value="100000">
+              </div>
+
+              <button id="btn-encrypt-submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;" disabled>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                Encrypt & Download .cvault File
+              </button>
+
+              <div id="encrypt-progress" style="display: none;">
+                <div class="progress-container"><div id="enc-progress-bar" class="progress-bar"></div></div>
+                <div class="progress-info"><span id="enc-progress-text">Processing...</span><span id="enc-progress-percent">0%</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hex & Shannon Entropy Visualizer Card -->
+          <div class="glass-card">
+            <h2 class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-emerald)" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+              Hex & Shannon Entropy Inspector
+            </h2>
+            <p class="card-subtitle">Real-time byte frequency spectrum chart and binary header viewer.</p>
+
+            <div style="margin-bottom: 1.25rem;">
+              <label class="form-label">Shannon Entropy Frequency Chart (Max: 8.000 bits/byte)</label>
+              <canvas id="entropy-canvas" width="600" height="140" style="width: 100%; height: 140px; background: rgba(3, 6, 17, 0.85); border-radius: 14px; border: 1px solid var(--border-color);"></canvas>
+              <div style="display: flex; justify-content: space-between; margin-top: 0.5rem; font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">
+                <span>Entropy: <strong id="entropy-val" style="color: var(--accent-text);">0.0000</strong></span>
+                <span>Randomness: <strong id="entropy-rating" style="color: var(--accent-emerald);">Normal Data</strong></span>
+              </div>
+            </div>
+
+            <div>
+              <label class="form-label">File Header Hex Dump (First 256 Bytes)</label>
+              <div class="hex-container" id="hex-view-container">
+                <div style="color: var(--text-dim);">No file selected for inspection...</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- TAB 2: FILE DECRYPT PANEL -->
+      <section id="tab-decrypt" class="tab-panel">
+        <div class="glass-card" style="max-width: 840px; margin: 0 auto;">
+          <h2 class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
+            Decrypt .cvault File
+          </h2>
+          <p class="card-subtitle">Validate signature, authenticate integrity tag, and restore original bytes.</p>
+
+          <!-- Modern Decrypt Dropzone -->
+          <div class="dropzone" id="decrypt-dropzone">
+            <input type="file" id="decrypt-file-input" class="file-input-hidden" accept=".cvault">
+            <div class="dropzone-icon">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            </div>
+            <div class="dropzone-title">Select Encrypted .cvault File</div>
+            <div class="dropzone-desc">Drag & drop your .cvault container here, or click the button below</div>
+            <button type="button" class="btn-browse-pill" onclick="document.getElementById('decrypt-file-input').click(); event.stopPropagation();">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              Browse .cvault File
+            </button>
+          </div>
+
+          <!-- Modern Decrypt File Card -->
+          <div id="decrypt-selected-file" class="file-card" style="display: none;">
+            <div class="file-card-info">
+              <div class="file-card-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
+              </div>
+              <div>
+                <div class="file-name" id="dec-filename">encrypted_file.cvault</div>
+                <div class="file-meta" id="dec-filesize">0 KB</div>
+              </div>
+            </div>
+            <button id="dec-file-remove" class="icon-btn" title="Remove File">&times;</button>
+          </div>
+
+          <div style="margin-top: 1.5rem;">
+            <div class="form-group">
+              <label class="form-label">Decryption Password</label>
+              <div class="input-with-action">
+                <input type="password" id="decrypt-password" class="form-control" placeholder="Enter password used during encryption...">
+                <button type="button" class="input-action-btn" id="toggle-dec-pwd-vis" title="Show/Hide Password">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Modern Custom Decrypt Keyfile Input Picker -->
+            <div class="form-group">
+              <label class="form-label">Optional Keyfile (.key file if used during encryption)</label>
+              <div class="custom-keyfile-picker">
+                <input type="file" id="decrypt-keyfile-input" class="file-input-hidden">
+                <button type="button" class="btn-keyfile-pill" onclick="document.getElementById('decrypt-keyfile-input').click();">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.778-7.778zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
+                  Attach .key File
+                </button>
+                <span id="dec-keyfile-status" class="keyfile-status-tag">No keyfile attached</span>
+              </div>
+            </div>
+
+            <button id="btn-decrypt-submit" class="btn btn-purple" style="width: 100%; margin-top: 1rem;" disabled>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
+              Authenticate & Decrypt File
+            </button>
+
+            <div id="decrypt-progress" style="display: none;">
+              <div class="progress-container"><div id="dec-progress-bar" class="progress-bar"></div></div>
+              <div class="progress-info"><span id="dec-progress-text">Processing...</span><span id="dec-progress-percent">0%</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: TEXT VAULT -->
+      <section id="tab-text" class="tab-panel">
+        <div class="grid-2">
+          
+          <div class="glass-card">
+            <h2 class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+              Lock Confidential Text
+            </h2>
+            <p class="card-subtitle">Encrypt secret messages into Base64 AES-256-GCM ciphertext.</p>
+
+            <div class="form-group">
+              <label class="form-label">Secret Text Payload</label>
+              <textarea id="text-encrypt-input" class="form-control" rows="5" placeholder="Type or paste confidential notes, API keys, credentials..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Encryption Secret Password</label>
+              <input type="password" id="text-encrypt-password" class="form-control" placeholder="Enter password to lock note...">
+            </div>
+
+            <button id="btn-text-encrypt" class="btn btn-primary" style="width: 100%;">Encrypt Text Payload</button>
+
+            <div class="form-group" style="margin-top: 1.5rem;">
+              <label class="form-label">Encrypted Base64 Output Ciphertext</label>
+              <div class="input-with-action">
+                <textarea id="text-encrypt-output" class="form-control" rows="4" readonly placeholder="Encrypted payload will appear here..."></textarea>
+              </div>
+              <button id="btn-copy-text-cipher" class="btn btn-secondary" style="width: 100%; margin-top: 0.75rem;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                Copy Base64 Ciphertext
+              </button>
+            </div>
+          </div>
+
+          <div class="glass-card">
+            <h2 class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-purple)" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
+              Unlock Text Payload
+            </h2>
+            <p class="card-subtitle">Decrypt Base64 ciphertext back into original plaintext note.</p>
+
+            <div class="form-group">
+              <label class="form-label">Base64 Encrypted Ciphertext</label>
+              <textarea id="text-decrypt-input" class="form-control" rows="5" placeholder="Paste Base64 ciphertext note here..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Decryption Password</label>
+              <input type="password" id="text-decrypt-password" class="form-control" placeholder="Enter password used during encryption...">
+            </div>
+
+            <button id="btn-text-decrypt" class="btn btn-purple" style="width: 100%;">Unlock & Decrypt Text</button>
+
+            <div class="form-group" style="margin-top: 1.5rem;">
+              <label class="form-label">Decrypted Original Text</label>
+              <textarea id="text-decrypt-output" class="form-control" rows="4" readonly placeholder="Decrypted note will appear here..."></textarea>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- TAB 4: KEY STUDIO -->
+      <section id="tab-keygen" class="tab-panel">
+        <div class="glass-card" style="max-width: 840px; margin: 0 auto;">
+          <h2 class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" stroke-width="2.5"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.778-7.778zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
+            Key & Passphrase Studio
+          </h2>
+          <p class="card-subtitle">Cryptographically secure pseudorandom passphrase generator with NIST entropy analytics.</p>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+            <div>
+              <div class="form-group">
+                <label class="form-label">Passphrase Length: <span id="keygen-len-val" style="color: var(--accent-text); font-family: var(--font-mono);">32</span> chars</label>
+                <input type="range" id="keygen-length" class="range-slider" min="12" max="128" value="32">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Character Sets Included</label>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.25rem;">
+                  <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; cursor: pointer;"><input type="checkbox" id="chk-lower" checked> Lowercase (a-z)</label>
+                  <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; cursor: pointer;"><input type="checkbox" id="chk-upper" checked> Uppercase (A-Z)</label>
+                  <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; cursor: pointer;"><input type="checkbox" id="chk-numbers" checked> Numbers (0-9)</label>
+                  <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; cursor: pointer;"><input type="checkbox" id="chk-symbols" checked> Special Symbols (!@#$%)</label>
+                </div>
+              </div>
+
+              <button id="btn-generate-pwd" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Generate High-Entropy Key</button>
+            </div>
+
+            <div>
+              <div class="form-group">
+                <label class="form-label">Generated Secret Passphrase</label>
+                <div class="input-with-action">
+                  <textarea id="keygen-pwd-output" class="form-control" rows="4" readonly placeholder="Click generate to create password..."></textarea>
+                </div>
+                <button id="btn-copy-keygen" class="btn btn-secondary" style="width: 100%; margin-top: 0.75rem;">Copy Passphrase</button>
+              </div>
+
+              <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); padding: 1rem; border-radius: 12px; margin-top: 1rem;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.35rem;">
+                  <span style="color: var(--text-muted);">Calculated Entropy:</span>
+                  <strong id="keygen-entropy" style="color: var(--accent-text); font-family: var(--font-mono);">0 bits</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span style="color: var(--text-muted);">Est. Crack Time:</span>
+                  <strong id="keygen-crack-time" style="color: var(--accent-emerald); font-family: var(--font-mono);">-</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 5: AUDIT LOG -->
+      <section id="tab-history" class="tab-panel">
+        <div class="glass-card" style="max-width: 840px; margin: 0 auto;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+            <div>
+              <h2 class="card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                Cryptographic Session Audit Log
+              </h2>
+              <p class="card-subtitle" style="margin-bottom: 0;">In-memory log of zero-trust operations performed during this browser session.</p>
+            </div>
+            <button id="btn-clear-history" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Clear Log</button>
+          </div>
+
+          <div class="hex-container" id="history-log-container" style="max-height: 380px;">
+            <div style="color: var(--text-dim);">No cryptographic activity recorded yet in this session.</div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- App Footer -->
+    <footer class="footer">
+      <p>&copy; 2026 File Encryption &amp; Decryption Tool &bull; Client-Side AES-256-GCM Zero-Trust Security Suite</p>
+      <p style="margin-top: 0.5rem;">
+        <a id="footer-github-link" href="https://github.com/Alby20022/File-Encryption-and-Decryption-Tool" target="_blank" rel="noopener noreferrer" style="color: var(--accent-text); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.4rem;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+          <span>View Source on GitHub</span>
+        </a>
+      </p>
+    </footer>
+
+  </div>
+
+  <!-- Toast Notification System -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Master JavaScript Application Engine -->
+  <script src="js/app.js"></script>
+</body>
+</html>
